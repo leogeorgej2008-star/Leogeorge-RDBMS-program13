@@ -1,21 +1,28 @@
--- Lab Program 13
--- Normalize the Student table up to Third Normal Form (3NF).
---
--- Write your solution below.
---
--- Functional Dependencies:
--- StudentID -> StudentName, CourseName
--- CourseName -> FacultyName
--- FacultyName -> DepartmentName
---
--- Requirements:
--- 1. Create normalized tables.
--- 2. Define primary keys.
--- 3. Define foreign keys.
--- 4. Insert sample data.
---
--- Do not modify test.sh or .github/workflows/autograding.yml.
+CREATE TABLE Employee_Log (
+    LogID INT AUTO_INCREMENT PRIMARY KEY,
+    EmployeeID INT,
+    Message VARCHAR(200),
+    LogDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-USE CollegeDB;
+-- Create Trigger
+DELIMITER //
 
--- Write your 3NF solution here.
+CREATE TRIGGER After_Employee_Insert
+AFTER INSERT ON Employee
+FOR EACH ROW
+BEGIN
+    INSERT INTO Employee_Log(EmployeeID, Message)
+    VALUES (
+        NEW.EmployeeID,
+        'New employee inserted successfully'
+    );
+END //
+
+DELIMITER ;
+
+-- Test the Trigger
+INSERT INTO Employee
+VALUES (2, 'Priya', 35000);
+
+SELECT * FROM Employee_Log;
